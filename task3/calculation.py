@@ -30,89 +30,93 @@ tests = [
 class Lessons:
     def __init__(self, tests):
         self.tests = tests
-        self.unic_pair = []
 
     def appearance(self, intervals):
         pupil_pair = self.get_pair(intervals['pupil'])
         tutor_pair = self.get_pair(intervals['tutor'])
         lesson_pair = self.get_pair(intervals['lesson'])
         pupil_unic_pair = self.check_uniq(pupil_pair)
-        self.unic_pair = []
         tutor_unic_pair = self.check_uniq(tutor_pair)
-        self.unic_pair = []
         lesson_unic_pair = self.check_uniq(lesson_pair)
-        self.unic_pair = []
         pupil_in_tutor = self.get_coincidence(tutor_unic_pair, pupil_unic_pair)
         pupil_and_tutor_in_lesson = self.get_coincidence(lesson_unic_pair, pupil_in_tutor)
         sum_time = self.get_counting_time(pupil_and_tutor_in_lesson)
 
         return sum_time
 
-    def check_uniq(self, check_pair):
+    @staticmethod
+    def check_uniq(check_pair):
         """вычесление отрезка временипроверка пар на нахождение
            одновременного присутствия на уроке"""
-        pair = []
-        time_start = check_pair[0][0]
-        time_end = check_pair[0][1]
-        for i in check_pair[1:]:
-            if (i[0] < time_start) & (i[1] > time_start):
-                time_start = i[0]
-            elif (i[1] > time_end) & (i[0] < time_end):
-                time_end = i[1]
-            elif (i[0] > time_end) or (i[1] < time_start):
-                if i not in pair:
-                    pair.append(i)
-        if [time_start, time_end] not in self.unic_pair:
-            self.unic_pair.append([time_start, time_end])
-        if len(pair) > 0:
-            self.check_uniq(pair)
+        unic_pair = []
 
-        return self.unic_pair
+        def check(check_pair):
+            pair = []
+            time_start = check_pair[0][0]
+            time_end = check_pair[0][1]
+            for i in check_pair[1:]:
+                if (i[0] < time_start) & (i[1] > time_start):
+                    time_start = i[0]
+                elif (i[1] > time_end) & (i[0] < time_end):
+                    time_end = i[1]
+                elif (i[0] > time_end) or (i[1] < time_start):
+                    if i not in pair:
+                        pair.append(i)
+            if [time_start, time_end] not in unic_pair:
+                unic_pair.append([time_start, time_end])
+            if len(pair) > 0:
+                check(pair)
 
-    def get_coincidence(self, pair_1, pair_2):
+            return unic_pair
+
+        return check(check_pair)
+
+    @staticmethod
+    def get_coincidence(pair_1, pair_2):
         """вычесление отрезка времени общего нахождения в эфире
            первой пары(pair_1) и второй пары(pair_2)"""
         coincidence_list = []
         for p_i in pair_1:
             for p_j in pair_2:
                 if (p_j[0] == p_i[0]) & (p_j[1] == p_i[1]):
-                    coincidence_0 = p_i[0]
-                    coincidence_1 = p_i[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_i[0]
+                    time_end = p_i[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] > p_i[0]) & (p_j[0] < p_i[1]) & (p_j[1] > p_i[1]):
-                    coincidence_0 = p_j[0]
-                    coincidence_1 = p_i[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_j[0]
+                    time_end = p_i[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] < p_i[0]) & (p_j[1] < p_i[1]) & (p_j[1] > p_i[0]):
-                    coincidence_0 = p_i[0]
-                    coincidence_1 = p_j[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_i[0]
+                    time_end = p_j[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] == p_i[0]) & (p_j[1] < p_i[1]) & (p_j[1] > p_i[0]):
-                    coincidence_0 = p_i[0]
-                    coincidence_1 = p_j[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_i[0]
+                    time_end = p_j[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] > p_i[0]) & (p_j[1] == p_i[1]) & (p_j[0] < p_i[1]):
-                    coincidence_0 = p_j[0]
-                    coincidence_1 = p_i[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_j[0]
+                    time_end = p_i[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] < p_i[0]) & (p_j[1] > p_i[1]):
-                    coincidence_0 = p_i[0]
-                    coincidence_1 = p_i[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_i[0]
+                    time_end = p_i[1]
+                    coincidence_list.append([time_start, time_end])
 
                 elif (p_j[0] > p_i[0]) & (p_j[0] < p_i[1]) & (p_j[1] < p_i[1]):
-                    coincidence_0 = p_j[0]
-                    coincidence_1 = p_j[1]
-                    coincidence_list.append([coincidence_0, coincidence_1])
+                    time_start = p_j[0]
+                    time_end = p_j[1]
+                    coincidence_list.append([time_start, time_end])
 
         return coincidence_list
 
-    def get_counting_time(self, pair_time):
+    @staticmethod
+    def get_counting_time(pair_time):
         """подсчет суммы времени каждой пары с момента включения p[0] и выключения p[1]"""
         sum_time = 0
         for p in pair_time:
@@ -121,7 +125,8 @@ class Lessons:
 
         return sum_time
 
-    def get_pair(self, lists):
+    @staticmethod
+    def get_pair(lists):
         """разбиение списков на пары из четного и нечетного индекса
            (начало и конец урока)"""
         pair_element = []
@@ -132,7 +137,7 @@ class Lessons:
         return pair_element
 
     def run(self):
-        for i, test in enumerate(tests):
+        for i, test in enumerate(self.tests):
             test_answer = self.appearance(test['data'])
             assert test_answer == test['answer'], f'Error on test case {i}, got {test_answer}, expected {test["answer"]}'
             print(test_answer)
